@@ -1,0 +1,168 @@
+﻿<Window x:Class="WorldOfGames.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WorldOfGames"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None">
+    <!--в title (на строчку выше) добавлены свойства, они просто уберают все лишнее мне из рабочего окна, а именно говно стиль окна window-->
+    <!--в windows.resourse добавлен код для скрывания и раскрывания бокового меню, я его просто копипастил от куда то-->
+    <Window.Resources>
+        <Storyboard x:Key="openAside">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="Aside">
+                <EasingDoubleKeyFrame KeyTime="0" Value="52"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="150"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="noContent">
+                <EasingDoubleKeyFrame KeyTime="0" Value="52"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="150"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="closeAside">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="Aside">
+                <EasingDoubleKeyFrame KeyTime="0" Value="150"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="52"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="noContent">
+                <EasingDoubleKeyFrame KeyTime="0" Value="150"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="52"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+    <!--тут тоже к боковому меню все относится-->
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="openAsideButton">
+            <BeginStoryboard Storyboard="{StaticResource openAside}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="closeAsideButton">
+            <BeginStoryboard Storyboard="{StaticResource closeAside}"/>
+        </EventTrigger>
+    </Window.Triggers>
+    
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="Image/background.jpg"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!--верхняя полоска окна, так как я её в title убрал-->
+        <Grid Grid.Row="0" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="72"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" Background="Black" Opacity="0.5"/>
+            <Grid Grid.Column="1" Background="Black" Opacity="0.5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Style="{StaticResource defButtonWindow}" Height="20" Width="20" Margin="2 2 2 2" Background="{x:Null}" Click="MinWindow_Click">
+                        <Image Source="Image/Icons/minWindow.png"/>
+                    </Button>
+                    <Button Style="{StaticResource defButtonWindow}" Height="20" Width="20" Margin="2 2 2 2" Background="{x:Null}" Click="MaxWindow_Click">
+                        <Image Source="Image/Icons/maxWindow.png"/>
+                    </Button>
+                    <Button Style="{StaticResource defButtonWindow}" Height="20" Width="20" Margin="2 2 2 2" Background="{x:Null}" Click="CloseWindow_Click">
+                        <Image Source="Image/Icons/closeWindow.png"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+        
+        <Grid Grid.Row="1">
+            <DockPanel HorizontalAlignment="Stretch">
+                <!--это боковое меню, ниже с ним связанное написано-->
+                <Grid Grid.Column="0" Width="52" x:Name="noContent"/>
+                <!--а вот тут то, все usercontrol, которые либо скрыты либо показан один, типо вкладки-->
+                <Grid Grid.Column="1" Width="auto" x:Name="Content">
+                    <!--вкладка домашняя, там где тупо текст-->
+                    <UserControl x:Name="homeControl" Height="425" Width="748" Visibility="Visible">
+                        <StackPanel VerticalAlignment="Center" Background="#252525" Opacity="0.9">
+                            <Label Content="WORLD OF GAMES" FontSize="80" Foreground="Black" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="labelHomeControl" Text="" FontSize="20" Foreground="#ababab" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </UserControl>
+                    <!--вкладка магазин, там где список всех игр-->
+                    <UserControl x:Name="storeControl" Height="425" Width="748" Visibility="Collapsed">
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                            <WrapPanel x:Name="listStoreControl"/>
+                        </ScrollViewer>
+                    </UserControl>
+                    <!--вкладка библиотека, там где список игр купленных пользователем-->
+                    <UserControl x:Name="labraryControl" Height="425" Width="748" Visibility="Collapsed">
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                            <WrapPanel x:Name="listLabraryControl"/>
+                        </ScrollViewer>
+                    </UserControl>
+                    <!--вкладка корзина, там где список товаров на покупку-->
+                    <UserControl x:Name="basketControl" Height="425" Width="748" Visibility="Collapsed">
+                        <StackPanel>
+                            <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                                <WrapPanel x:Name="listBasketControl"/>
+                            </ScrollViewer>
+                            <Button x:Name="butPrice" Width="auto" Height="30" VerticalAlignment="Bottom" Content="купить все" Style="{StaticResource defButtonList}" Click="butPrice_Click"/>
+                        </StackPanel>
+                    </UserControl>
+                    <!--вкладка юзера, там где мы редактируем пользователя-->
+                    <UserControl x:Name="userControl" Height="425" Width="748" Visibility="Collapsed">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Column="0" Grid.Row="0" Content="Username" FontSize="20" Foreground="#ababab" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <Label Grid.Column="0" Grid.Row="1" Content="Password" FontSize="20" Foreground="#ababab" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <Label Grid.Column="0" Grid.Row="2" Content="E-mail" FontSize="20" Foreground="#ababab" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <Label Grid.Column="0" Grid.Row="3" Content="Money" FontSize="20" Foreground="#ababab" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <TextBox x:Name="userControlUsername" Grid.Column="1" Grid.Row="0" Style="{StaticResource defTextBox}" Height="30" Width="200" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="userControlPassword" Grid.Column="1" Grid.Row="1" Style="{StaticResource defTextBox}" Height="30" Width="200" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="userControlEmail" Grid.Column="1" Grid.Row="2" Style="{StaticResource defTextBox}" Height="30" Width="200" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="userControlMoney" Grid.Column="1" Grid.Row="3" Style="{StaticResource defTextBox}" Height="30" Width="200" HorizontalAlignment="Left"/>
+                            <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+                                <StackPanel VerticalAlignment="Bottom">
+                                    <Button x:Name="userControlUpdate" Width="auto" Height="30" Content="Изменить" Style="{StaticResource defButtonList}" Click="userControlUpdate_Click" Margin="0, 5, 0, 5"/>
+                                    <Button x:Name="userControlDelete" Width="auto" Height="30" Content="Удалить" Style="{StaticResource defButtonList}" Click="userControlDelete_Click" Margin="0, 5, 0, 5"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </UserControl>
+                </Grid>
+            </DockPanel>
+        </Grid>
+        <!--боковое меню-->
+        <Grid x:Name="Aside" Grid.Row="0" Grid.RowSpan="2" Width="52" HorizontalAlignment="Left">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <!--тут кнопки для скрывания и раскрывания-->
+                <Button x:Name="openAsideButton" Style="{StaticResource defButtonWindow}" Height="25" Width="25" HorizontalAlignment="Right" Background="{x:Null}" BorderBrush="{x:Null}" Click="openAsideButton_Click">
+                    <Image Source="Image/Icons/menu.png"/>
+                </Button>
+                <Button x:Name="closeAsideButton" Style="{StaticResource defButtonWindow}" Height="25" Width="25" HorizontalAlignment="Right" Background="{x:Null}" BorderBrush="{x:Null}" Visibility="Collapsed" Click="closeAsideButton_Click">
+                    <Image Source="Image/Icons/left.png"/>
+                </Button>
+            </Grid>
+            <!--тут уже само меню-->
+            <Grid Grid.Row="1" Background="Black" Opacity="0.5">
+                <ListView Background="{x:Null}" BorderThickness="0" VerticalAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListViewItem IsSelected="True" Height="50" Style="{StaticResource defListViewHome}" PreviewMouseLeftButtonDown="ListViewItemHome_MouseLeftButtonDown"/>
+                    <ListViewItem Height="50" Style="{StaticResource defListViewStore}" PreviewMouseLeftButtonDown="ListViewItemStore_MouseLeftButtonDown"/>
+                    <ListViewItem Height="50" Style="{StaticResource defListViewLibrary}" PreviewMouseLeftButtonDown="ListViewItemLabrary_MouseLeftButtonDown"/>
+                    <ListViewItem Height="50" Style="{StaticResource defListViewBasket}" PreviewMouseLeftButtonDown="ListViewItemBasket_MouseLeftButtonDown"/>
+                    <ListViewItem Height="50" Style="{StaticResource defListViewUser}" PreviewMouseLeftButtonDown="ListViewItemUser_MouseLeftButtonDown"/>
+                    <ListViewItem Height="50" Style="{StaticResource defListViewClose}" PreviewMouseLeftButtonDown="ListViewItemClose_MouseLeftButtonDown"/>
+                </ListView>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
